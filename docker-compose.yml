@@ -1,0 +1,41 @@
+nginx:
+  image: sutat/nginx
+  links:
+    - transmission
+    - plex
+    - sickbeard
+  ports:
+    - 80:80
+    # 443
+
+plex:
+  image: timhaak/plex
+  volumes:
+    - /tmp/plex/config:/config
+    - /tmp/sickbeard/downloads:/data
+  ports:
+    #- 32400
+    - 32400:32400 # A supprimer apres les debugs ?
+
+sickbeard:
+  image: sutat/sickbeard
+  links:
+    - transmission
+  volumes:
+    - /tmp/downloads:/var/lib/transmission-daemon/downloads
+    - /tmp/sickbeard/downloads:/downloads
+    - /tmp/sickbeard/config:/config
+  environment:
+  ports:
+    # - 8081
+    - 8081:8081 # A supprimer apres les debugs ?
+
+
+transmission:
+   image: sutat/transmission
+   volumes:
+    - /tmp/downloads:/var/lib/transmission-daemon/downloads
+    - /tmp/sickbeard/downloads:/downloads
+   ports:
+     #- 9091
+     - 9091:9091 # A supprimer apres les debug ?
