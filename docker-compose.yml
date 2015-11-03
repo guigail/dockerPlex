@@ -1,35 +1,41 @@
 nginx:
   image: nginx
   links:
-    - transmission
+    - torrents 
     - plex
-    - sickbeard
-  ports:
-    - 8081:80
+    - shows 
+#  ports:
+    #- 8081:80
 
 plex:
   image: timhaak/plex
   volumes:
     - /srv/docker/vids/plex/config:/config
-    - /srv/docker/vids/sickbeard/downloads:/data
+    - /srv/docker/vids/shows/downloads:/data
   ports:
-    - 32400
+    - 32400:32400
 
-sickbeard:
-  image: sutat/sickbeard
+shows:
+  image: timhaak/sickrage 
   links:
-    - transmission
+    - torrents 
   volumes:
-    - /srv/docker/vids/downloads:/var/lib/transmission-daemon/downloads
-    - /srv/docker/vids/sickbeard/downloads:/downloads
-    - /srv/docker/vids/sickbeard/config:/config
+    - /srv/docker/vids/torrents/downloads:/var/lib/transmission-daemon/downloads
+    - /srv/docker/vids/shows/downloads:/downloads
+    - /srv/docker/vids/shows/config:/config
+    - /srv/docker/vids/shows/tv:/tv
+    - /etc/localtime:/etc/localtime:ro
   ports:
-    - 8081
+    - 8081:8081
 
-transmission:
+torrents:
    image: sutat/transmission
    volumes:
-    - /srv/docker/vids/downloads:/var/lib/transmission-daemon/downloads
-    - /srv/docker/vids/sickbeard/downloads:/downloads
+    - /srv/docker/vids/torrents/downloads:/var/lib/transmission-daemon/downloads
+    - /srv/docker/vids/torrents/incomplete:/var/lib/transmission-daemon/incomplete
+    - /srv/docker/vids/torrents/info:/var/lib/transmission-daemon/.config/transmission-daemon
+    - /srv/docker/vids/shows/downloads:/downloads
    ports:
      - 9091
+     - 51413:51413
+     - 51413:51413/udp
